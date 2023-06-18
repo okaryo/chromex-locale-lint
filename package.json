@@ -20,6 +20,7 @@
     "chrome",
     "chrome-extension",
     "locale",
+    "i18n",
     "lint"
   ],
   "author": "okaryo",
