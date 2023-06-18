@@ -1,7 +1,7 @@
 {
   "name": "chromex-locale-lint",
   "version": "0.0.1",
-  "description": "",
+  "description": "chromex-locale-lint is a CLI tool that helps you validate your Chrome extension's localization files.",
   "type": "module",
   "scripts": {
     "build": "tsc",
