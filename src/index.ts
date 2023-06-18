@@ -4,7 +4,7 @@ import chalk from "chalk";
 import fs from "fs";
 import path from "path";
 import yargs from "yargs";
-import { hideBin } from 'yargs/helpers'
+import { hideBin } from "yargs/helpers";
 
 const supportedLocales = [
   "ar",
@@ -108,7 +108,9 @@ try {
   const rawContent = fs.readFileSync(baseLangFilePath, "utf-8");
   baseLangMessages = JSON.parse(rawContent);
 } catch (err) {
-  console.error(`[${chalk.red("error")}] Failed to read or parse ${baseLangFilePath}.`);
+  console.error(
+    `[${chalk.red("error")}] Failed to read or parse ${baseLangFilePath}.`
+  );
   process.exit(1);
 }
 
@@ -123,12 +125,15 @@ const otherLocalesMessages = localeDirs
       const messages = JSON.parse(rawContent);
       return { locale: dir, messages };
     } catch (err) {
-      console.error(`[${chalk.red("error")}] Failed to read or parse ${messagesFilePath}.`);
+      console.error(
+        `[${chalk.red("error")}] Failed to read or parse ${messagesFilePath}.`
+      );
       process.exit(1);
     }
   });
 
 // Compare the keys of the base language and other locales
+let hasErrors = false;
 const baseLanguage = argv.baseLang;
 const baseLocaleKeysSet = new Set(Object.keys(baseLangMessages));
 for (const { locale, messages } of otherLocalesMessages) {
@@ -137,7 +142,9 @@ for (const { locale, messages } of otherLocalesMessages) {
   for (const key of baseLocaleKeysSet) {
     if (!otherLocaleKeysSet.has(key)) {
       console.warn(
-        `[${chalk.yellow("warn")}] Key "${key}" in base language \`${baseLanguage}\` does not exist in \`${locale}\``
+        `[${chalk.yellow(
+          "warn"
+        )}] Key "${key}" in base language \`${baseLanguage}\` does not exist in \`${locale}\``
       );
     }
   }
@@ -145,8 +152,15 @@ for (const { locale, messages } of otherLocalesMessages) {
   for (const key of otherLocaleKeysSet) {
     if (!baseLocaleKeysSet.has(key)) {
       console.error(
-        `[${chalk.red("error")}] Key "${key}" in \`${locale}\` does not exist in base language \`${baseLanguage}\``
+        `[${chalk.red(
+          "error"
+        )}] Key "${key}" in \`${locale}\` does not exist in base language \`${baseLanguage}\``
       );
+      hasErrors = true;
     }
   }
+}
+
+if (hasErrors) {
+  process.exit(1);
 }
