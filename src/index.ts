@@ -6,6 +6,17 @@ import path from "path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
+type Messages = {
+  string: {
+    message: string;
+    description: string;
+    placeholders: {
+      content: string;
+      example?: string;
+    };
+  };
+};
+
 const supportedLocales = [
   "ar",
   "am",
@@ -103,7 +114,7 @@ const baseLangFilePath = path.join(
   argv.baseLang,
   "messages.json"
 );
-let baseLangMessages: any;
+let baseLangMessages: Messages;
 try {
   const rawContent = fs.readFileSync(baseLangFilePath, "utf-8");
   baseLangMessages = JSON.parse(rawContent);
@@ -122,7 +133,7 @@ const otherLocalesMessages = localeDirs
     const messagesFilePath = path.join(localesDirPath, dir, "messages.json");
     try {
       const rawContent = fs.readFileSync(messagesFilePath, "utf-8");
-      const messages = JSON.parse(rawContent);
+      const messages: Messages = JSON.parse(rawContent);
       return { locale: dir, messages };
     } catch (err) {
       console.error(
