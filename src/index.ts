@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import fs from "fs";
 import path from "path";
 import yargs from "yargs";
@@ -127,7 +129,7 @@ const otherLocalesMessages = localeDirs
 // Compare the keys of the base language and other locales
 const baseLanguage = argv.baseLang;
 const baseLocaleKeysSet = new Set(Object.keys(baseLangMessages));
-for (const [locale, messages] of Object.entries(otherLocalesMessages)) {
+for (const { locale, messages } of otherLocalesMessages) {
   const otherLocaleKeysSet = new Set(Object.keys(messages));
 
   for (const key of baseLocaleKeysSet) {
