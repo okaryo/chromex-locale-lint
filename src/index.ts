@@ -7,12 +7,14 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 
 type Messages = {
-  string: {
+  [key: string]: {
     message: string;
     description?: string;
     placeholders?: {
-      content: string;
-      example?: string;
+      [key: string]: {
+        content: string;
+        example?: string;
+      };
     };
   };
 };
