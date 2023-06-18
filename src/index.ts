@@ -9,8 +9,8 @@ import { hideBin } from "yargs/helpers";
 type Messages = {
   string: {
     message: string;
-    description: string;
-    placeholders: {
+    description?: string;
+    placeholders?: {
       content: string;
       example?: string;
     };
