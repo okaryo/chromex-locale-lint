@@ -2,6 +2,14 @@
 
 chromex-locale-lint is a CLI tool that helps you validate your Chrome extension's localization files (`_locales/*/messages.json`). It checks for missing fields across locales and also validates the locale directory names against the list of locales supported by Google Chrome.
 
+## Features
+
+- **Missing Key Check:** Checks whether there are any keys in the base locale that do not exist in the other locales. Also, checks if there are any keys in other locales that do not exist in the base locale.
+
+- **Invalid Locale Check:** Validates all locale directories against the list of language tags provided by Google Chrome. If a locale directory name does not match any of Chrome's supported locales, it will be reported.
+
+- **Easy to Integrate with CI/CD:** Can be easily integrated with your CI/CD pipeline to ensure locale consistency at all times. Provides error codes on failure, which can be used to stop the build process.
+
 ## Installation
 
 To install chromex-locale-lint, you can use npm:
