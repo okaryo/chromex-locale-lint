@@ -106,8 +106,8 @@ for (const directory of directories) {
         directory.name
       }' detected in '${path.join(
         localesDirPath,
-        directory.name
-      )}'. Please check the locale directory name.`
+        directory.name,
+      )}'. Please check the locale directory name.`,
     );
   }
 }
@@ -116,7 +116,7 @@ for (const directory of directories) {
 const baseLangFilePath = path.join(
   localesDirPath,
   argv.baseLang,
-  "messages.json"
+  "messages.json",
 );
 let baseLangMessages: Messages;
 try {
@@ -124,7 +124,7 @@ try {
   baseLangMessages = JSON.parse(rawContent);
 } catch (err) {
   console.error(
-    `[${chalk.red("error")}] Failed to read or parse ${baseLangFilePath}.`
+    `[${chalk.red("error")}] Failed to read or parse ${baseLangFilePath}.`,
   );
   process.exit(1);
 }
@@ -141,7 +141,7 @@ const otherLocalesMessages = localeDirs
       return { locale: dir, messages };
     } catch (err) {
       console.error(
-        `[${chalk.red("error")}] Failed to read or parse ${messagesFilePath}.`
+        `[${chalk.red("error")}] Failed to read or parse ${messagesFilePath}.`,
       );
       process.exit(1);
     }
@@ -158,8 +158,8 @@ for (const { locale, messages } of otherLocalesMessages) {
     if (!otherLocaleKeysSet.has(key)) {
       console.warn(
         `[${chalk.yellow(
-          "warn"
-        )}] Key "${key}" in base language \`${baseLanguage}\` does not exist in \`${locale}\``
+          "warn",
+        )}] Key "${key}" in base language \`${baseLanguage}\` does not exist in \`${locale}\``,
       );
     }
   }
@@ -168,8 +168,8 @@ for (const { locale, messages } of otherLocalesMessages) {
     if (!baseLocaleKeysSet.has(key)) {
       console.error(
         `[${chalk.red(
-          "error"
-        )}] Key "${key}" in \`${locale}\` does not exist in base language \`${baseLanguage}\``
+          "error",
+        )}] Key "${key}" in \`${locale}\` does not exist in base language \`${baseLanguage}\``,
       );
       hasErrors = true;
     }
