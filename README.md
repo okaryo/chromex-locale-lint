@@ -37,3 +37,5 @@ npx chromex-locale-lint --localesDir /path/to/locales --baseLang en
 
 * `--localesDir`: The directory where your locales are located. Defaults to `_locales/`.
 * `--baseLang`: The language to use as a basis for comparison with other languages. Defaults to `en`.
+* `--strict`: When enabled, treats warnings as errors. This is useful for enforcing strict locale consistency in your project. If any warnings are generated (such as missing keys in locales compared to the base language), the tool will exit with an error code, making it ideal for use in CI/CD pipelines to ensure high-quality translations. Defaults to `false`.
+
