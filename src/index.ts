@@ -129,7 +129,7 @@ const baseLangFilePath = path.join(
 	argv.baseLang,
 	"messages.json",
 );
-let baseLangMessages: Messages;
+let baseLangMessages: Messages = {};
 try {
 	const rawContent = fs.readFileSync(baseLangFilePath, "utf-8");
 	baseLangMessages = JSON.parse(rawContent);
@@ -147,7 +147,7 @@ for (const dir of localeDirs) {
 		const messages: Messages = JSON.parse(rawContent);
 		const otherLocaleKeysSet = new Set(Object.keys(messages));
 
-		for (const key of Object.keys(baseLangMessages!)) {
+		for (const key of Object.keys(baseLangMessages)) {
 			if (!otherLocaleKeysSet.has(key)) {
 				logAndExitIfNeeded(
 					`Key "${key}" in base language \`${argv.baseLang}\` does not exist in \`${dir}\``,
@@ -157,7 +157,7 @@ for (const dir of localeDirs) {
 		}
 
 		for (const key of otherLocaleKeysSet) {
-			if (!Object.hasOwn(baseLangMessages!, key)) {
+			if (!Object.hasOwn(baseLangMessages, key)) {
 				logAndExitIfNeeded(
 					`Key "${key}" in \`${dir}\` does not exist in base language \`${argv.baseLang}\``,
 				);
