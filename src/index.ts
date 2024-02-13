@@ -88,20 +88,32 @@ const argv = yargs(hideBin(process.argv))
     description: "Specify the base language",
     default: "en",
   })
+  .option("strict", {
+    alias: "s",
+    type: "boolean",
+    description: "Treat warnings as errors",
+    default: false,
+  })
   .parseSync();
 
-// Check if the locales directory exists
+const logAndExitIfNeeded = (message: string, isWarning: boolean = false) => {
+  if (isWarning && !argv.strict) {
+    console.warn(`[${chalk.yellow("warn")}] ${message}`);
+  } else {
+    console.error(`[${chalk.red("error")}] ${message}`);
+    process.exit(1);
+  }
+};
+
 const localesDirPath = path.resolve(process.cwd(), argv.localesDir);
 if (!fs.existsSync(localesDirPath)) {
-  console.error(`Locales directory ${localesDirPath} does not exist.`);
-  process.exit(1);
+  logAndExitIfNeeded(`Locales directory ${localesDirPath} does not exist.`);
 }
 
-// Check if the directory names are valid supported locale names
 const directories = fs.readdirSync(localesDirPath, { withFileTypes: true });
 for (const directory of directories) {
   if (!supportedLocales.includes(directory.name)) {
-    console.error(
+    logAndExitIfNeeded(
       `Error: Invalid locale directory '${
         directory.name
       }' detected in '${path.join(
@@ -112,7 +124,6 @@ for (const directory of directories) {
   }
 }
 
-// Read the base language messages.json file
 const baseLangFilePath = path.join(
   localesDirPath,
   argv.baseLang,
@@ -123,59 +134,35 @@ try {
   const rawContent = fs.readFileSync(baseLangFilePath, "utf-8");
   baseLangMessages = JSON.parse(rawContent);
 } catch (err) {
-  console.error(
-    `[${chalk.red("error")}] Failed to read or parse ${baseLangFilePath}.`,
-  );
-  process.exit(1);
+  logAndExitIfNeeded(`Failed to read or parse ${baseLangFilePath}.`);
 }
 
-// Read the messages.json files of other locales
 const localeDirs = fs.readdirSync(localesDirPath);
-const otherLocalesMessages = localeDirs
+localeDirs
   .filter((dir) => dir !== argv.baseLang)
-  .map((dir) => {
+  .forEach((dir) => {
     const messagesFilePath = path.join(localesDirPath, dir, "messages.json");
     try {
       const rawContent = fs.readFileSync(messagesFilePath, "utf-8");
       const messages: Messages = JSON.parse(rawContent);
-      return { locale: dir, messages };
+      const otherLocaleKeysSet = new Set(Object.keys(messages));
+      Object.keys(baseLangMessages).forEach((key) => {
+        if (!otherLocaleKeysSet.has(key)) {
+          logAndExitIfNeeded(
+            `Key "${key}" in base language \`${argv.baseLang}\` does not exist in \`${dir}\``,
+            true,
+          );
+        }
+      });
+
+      otherLocaleKeysSet.forEach((key) => {
+        if (!baseLangMessages.hasOwnProperty(key)) {
+          logAndExitIfNeeded(
+            `Key "${key}" in \`${dir}\` does not exist in base language \`${argv.baseLang}\``,
+          );
+        }
+      });
     } catch (err) {
-      console.error(
-        `[${chalk.red("error")}] Failed to read or parse ${messagesFilePath}.`,
-      );
-      process.exit(1);
+      logAndExitIfNeeded(`Failed to read or parse ${messagesFilePath}.`);
     }
   });
-
-// Compare the keys of the base language and other locales
-let hasErrors = false;
-const baseLanguage = argv.baseLang;
-const baseLocaleKeysSet = new Set(Object.keys(baseLangMessages));
-for (const { locale, messages } of otherLocalesMessages) {
-  const otherLocaleKeysSet = new Set(Object.keys(messages));
-
-  for (const key of baseLocaleKeysSet) {
-    if (!otherLocaleKeysSet.has(key)) {
-      console.warn(
-        `[${chalk.yellow(
-          "warn",
-        )}] Key "${key}" in base language \`${baseLanguage}\` does not exist in \`${locale}\``,
-      );
-    }
-  }
-
-  for (const key of otherLocaleKeysSet) {
-    if (!baseLocaleKeysSet.has(key)) {
-      console.error(
-        `[${chalk.red(
-          "error",
-        )}] Key "${key}" in \`${locale}\` does not exist in base language \`${baseLanguage}\``,
-      );
-      hasErrors = true;
-    }
-  }
-}
-
-if (hasErrors) {
-  process.exit(1);
-}
