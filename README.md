@@ -1,3 +1,5 @@
+[![CI](https://github.com/okaryo/chromex-locale-lint/actions/workflows/ci.yml/badge.svg)](https://github.com/okaryo/chromex-locale-lint/actions/workflows/ci.yml)
+
 # chromex-locale-lint
 
 chromex-locale-lint is a CLI tool that helps you validate your Chrome extension's localization files (`_locales/*/messages.json`). It checks for missing fields across locales and also validates the locale directory names against the list of locales supported by Google Chrome.
